@@ -31,7 +31,7 @@ export default function App() {
             </ProtectedRoute>
           } 
         >
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route index element={<div className="text-center py-10">欢迎使用技术社区管理系统，请从左侧菜单选择操作</div>} />
           <Route path="dashboard" element={<div className="text-center py-10">欢迎使用技术社区管理系统，请从左侧菜单选择操作</div>} />
           <Route path="categories" element={<CategoryManagement />} />
           <Route path="posts" element={<PostModeration />} />

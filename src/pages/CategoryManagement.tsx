@@ -99,12 +99,12 @@ export default function CategoryManagement() {
         >
           {isAdding ? (
             <>
-              <i class="fa-solid fa-times mr-2"></i>
+              <i className="fa-solid fa-times mr-2"></i>
               取消
             </>
           ) : (
             <>
-              <i class="fa-solid fa-plus mr-2"></i>
+              <i className="fa-solid fa-plus mr-2"></i>
               添加分类
             </>
           )}
@@ -190,7 +190,7 @@ export default function CategoryManagement() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <i class="fa-solid fa-spinner fa-spin text-slate-400"></i>
+                      <i className="fa-solid fa-spinner fa-spin text-slate-400"></i>
                       <span className="text-slate-500">加载分类中...</span>
                     </div>
                   </td>
@@ -200,7 +200,7 @@ export default function CategoryManagement() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center">
-                      <i class="fa-solid fa-folder-open text-4xl mb-3 text-slate-300"></i>
+                      <i className="fa-solid fa-folder-open text-4xl mb-3 text-slate-300"></i>
                       <p>暂无分类数据</p>
                       <button
                         onClick={() => setIsAdding(true)}
@@ -239,9 +239,9 @@ export default function CategoryManagement() {
                         )}
                       >
                         {deleteLoading === category.id ? (
-                          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                          <i className="fa-solid fa-spinner fa-spin mr-1"></i>
                         ) : (
-                          <i class="fa-solid fa-trash mr-1"></i>
+                          <i className="fa-solid fa-trash mr-1"></i>
                         )}
                         删除
                       </button>

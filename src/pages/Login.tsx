@@ -11,21 +11,37 @@ export default function Login() {
   const { setIsAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
-    // Mock authentication - in real app, this would be an API call
-    setTimeout(() => {
-      if (username === 'admin' && password === 'admin123') {
+    try {
+      const response = await fetch('http://localhost:8082/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: "zmj9831",
+          password: "zmj983167157",
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
         setIsAuthenticated(true);
         toast.success('登录成功');
         navigate('/admin/dashboard');
       } else {
-        toast.error('账号或密码错误');
+        toast.error(result.message || '登录失败');
       }
+    } catch (error) {
+      toast.error('网络请求失败，请检查服务器连接');
+      console.error('Error logging in:', error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return (
@@ -42,7 +58,7 @@ export default function Login() {
               <label htmlFor="username" className="block text-sm font-medium text-slate-200 mb-1">账号</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <i class="fa-solid fa-user"></i>
+                  <i className="fa-solid fa-user"></i>
                 </span>
                 <input
                   type="text"
@@ -60,7 +76,7 @@ export default function Login() {
               <label htmlFor="password" className="block text-sm font-medium text-slate-200 mb-1">密码</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <i class="fa-solid fa-lock"></i>
+                  <i className="fa-solid fa-lock"></i>
                 </span>
                 <input
                   type="password"
@@ -81,7 +97,7 @@ export default function Login() {
             >
               {loading ? (
                 <>
-                  <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                   登录中...
                 </>
               ) : (

@@ -34,7 +34,7 @@ export default function AdminDashboard() {
                   : "hover:bg-slate-100 text-slate-700 hover:text-blue-600"
               )}
             >
-              <i class="fa-solid fa-folder-open w-5 h-5 mr-3"></i>
+              <i className="fa-solid fa-folder-open w-5 h-5 mr-3"></i>
               分类管理
             </Link>
             <Link
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
                   : "hover:bg-slate-100 text-slate-700 hover:text-blue-600"
               )}
             >
-              <i class="fa-solid fa-newspaper w-5 h-5 mr-3"></i>
+              <i className="fa-solid fa-newspaper w-5 h-5 mr-3"></i>
               帖子审核
             </Link>
             <Link
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
                   : "hover:bg-slate-100 text-slate-700 hover:text-blue-600"
               )}
             >
-              <i class="fa-solid fa-users w-5 h-5 mr-3"></i>
+              <i className="fa-solid fa-users w-5 h-5 mr-3"></i>
               用户管理
             </Link>
           </div>
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between h-16 px-4">
             <div className="flex items-center">
               <button className="md:hidden mr-4 text-slate-500 hover:text-slate-700">
-                <i class="fa-solid fa-bars text-xl"></i>
+                <i className="fa-solid fa-bars text-xl"></i>
               </button>
               <h2 className="text-lg font-semibold text-slate-800">管理员控制台</h2>
             </div>
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
                 onClick={handleLogout}
                 className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
               >
-                <i class="fa-solid fa-sign-out-alt mr-2"></i>
+                <i className="fa-solid fa-sign-out-alt mr-2"></i>
                 退出登录
               </button>
             </div>

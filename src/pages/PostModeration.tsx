@@ -175,13 +175,13 @@ export default function PostModeration() {
                 {loading ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="flex items-center space-x-2">
-                      <i class="fa-solid fa-spinner fa-spin text-slate-400"></i>
+                      <i className="fa-solid fa-spinner fa-spin text-slate-400"></i>
                       <span className="text-slate-500">加载中...</span>
                     </div>
                   </div>
                 ) : posts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-slate-500 p-4 text-center">
-                    <i class="fa-solid fa-newspaper text-4xl mb-3 text-slate-300"></i>
+                    <i className="fa-solid fa-newspaper text-4xl mb-3 text-slate-300"></i>
                     <p>此状态下暂无帖子</p>
                   </div>
                 ) : (
@@ -224,11 +224,11 @@ export default function PostModeration() {
                     <div className="flex items-center justify-between mt-2 text-sm">
                       <div className="flex items-center space-x-4">
                         <span className="text-slate-600">
-                          <i class="fa-solid fa-user mr-1 text-slate-400"></i>
+                          <i className="fa-solid fa-user mr-1 text-slate-400"></i>
                           {selectedPost.author.username}
                         </span>
                         <span className="text-slate-600">
-                          <i class="fa-solid fa-folder mr-1 text-slate-400"></i>
+                          <i className="fa-solid fa-folder mr-1 text-slate-400"></i>
                           {selectedPost.categoryName}
                         </span>
                         <span className="text-slate-500">
@@ -245,9 +245,9 @@ export default function PostModeration() {
                         className="text-red-600 hover:text-red-800 text-sm flex items-center"
                       >
                         {banLoading === selectedPost.author.id ? (
-                          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                          <i className="fa-solid fa-spinner fa-spin mr-1"></i>
                         ) : (
-                          <i class="fa-solid fa-user-slash mr-1"></i>
+                          <i className="fa-solid fa-user-slash mr-1"></i>
                         )}
                         封禁用户
                       </button>
@@ -278,12 +278,12 @@ export default function PostModeration() {
                       >
                         {actionLoading === selectedPost.id ? (
                           <>
-                            <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                            <i className="fa-solid fa-spinner fa-spin mr-1"></i>
                             处理中...
                           </>
                         ) : (
                           <>
-                            <i class="fa-solid fa-times mr-1"></i>
+                            <i className="fa-solid fa-times mr-1"></i>
                             拒绝
                           </>
                         )}
@@ -301,12 +301,12 @@ export default function PostModeration() {
                       >
                         {actionLoading === selectedPost.id ? (
                           <>
-                            <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                            <i className="fa-solid fa-spinner fa-spin mr-1"></i>
                             处理中...
                           </>
                         ) : (
                           <>
-                            <i class="fa-solid fa-check mr-1"></i>
+                            <i className="fa-solid fa-check mr-1"></i>
                             通过
                           </>
                         )}
@@ -316,7 +316,7 @@ export default function PostModeration() {
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-slate-500 p-4 text-center">
-                  <i class="fa-solid fa-arrow-left-right text-4xl mb-3 text-slate-300"></i>
+                  <i className="fa-solid fa-arrow-left-right text-4xl mb-3 text-slate-300"></i>
                   <p>请从左侧列表选择一个帖子查看详情</p>
                 </div>
               )}

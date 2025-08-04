@@ -84,7 +84,7 @@ export default function UserManagement() {
               placeholder="输入用户名搜索..."
               className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-slate-900"
             />
-            <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+            <i className="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
           </div>
           
           <div className="flex gap-3">
@@ -95,12 +95,12 @@ export default function UserManagement() {
             >
               {loading ? (
                 <>
-                  <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                   搜索中...
                 </>
               ) : (
                 <>
-                  <i class="fa-solid fa-search mr-2"></i>
+                  <i className="fa-solid fa-search mr-2"></i>
                   搜索
                 </>
               )}
@@ -112,7 +112,7 @@ export default function UserManagement() {
               disabled={!searchTerm && users.length === 0}
               className="px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center"
             >
-              <i class="fa-solid fa-times mr-2"></i>
+              <i className="fa-solid fa-times mr-2"></i>
               清除
             </button>
           </div>
@@ -203,11 +203,11 @@ export default function UserManagement() {
                         )}
                       >
                         {actionLoading === user.id ? (
-                          <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                          <i className="fa-solid fa-spinner fa-spin mr-1"></i>
                         ) : user.status === 'active' ? (
-                          <i class="fa-solid fa-user-slash mr-1"></i>
+                          <i className="fa-solid fa-user-slash mr-1"></i>
                         ) : (
-                          <i class="fa-solid fa-user-check mr-1"></i>
+                          <i className="fa-solid fa-user-check mr-1"></i>
                         )}
                         {user.status === 'active' ? '封禁' : '解封'}
                       </button>
@@ -224,14 +224,14 @@ export default function UserManagement() {
       {!loading && users.length === 0 && searchTerm && (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
           <div className="flex flex-col items-center">
-            <i class="fa-solid fa-search text-5xl text-slate-300 mb-4"></i>
+            <i className="fa-solid fa-search text-5xl text-slate-300 mb-4"></i>
             <h3 className="text-lg font-medium text-slate-900 mb-1">未找到匹配的用户</h3>
             <p className="text-slate-500 mb-4">尝试使用不同的搜索词或检查拼写</p>
             <button
               onClick={() => setSearchTerm('')}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              <i class="fa-solid fa-eraser mr-2"></i>
+              <i className="fa-solid fa-eraser mr-2"></i>
               清除搜索条件
             </button>
           </div>
@@ -242,7 +242,7 @@ export default function UserManagement() {
       {!loading && users.length === 0 && !searchTerm && (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
           <div className="flex flex-col items-center">
-            <i class="fa-solid fa-users text-5xl text-slate-300 mb-4"></i>
+            <i className="fa-solid fa-users text-5xl text-slate-300 mb-4"></i>
             <h3 className="text-lg font-medium text-slate-900 mb-1">用户管理</h3>
             <p className="text-slate-500 mb-4">使用上方搜索框查找用户并管理其账号状态</p>
           </div>
