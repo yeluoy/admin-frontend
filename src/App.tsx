@@ -5,20 +5,40 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import CategoryManagement from "@/pages/CategoryManagement";
 import PostModeration from "@/pages/PostModeration";
 import UserManagement from "@/pages/UserManagement";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from '@/contexts/authContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 从 localStorage 初始化 token 和认证状态
+  const [token, setTokenState] = useState<string | null>(() => localStorage.getItem('admin_token'));
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!token);
 
+  // 封装 setToken 以同时更新 localStorage
+  const setToken = (newToken: string | null) => {
+    setTokenState(newToken);
+    if (newToken) {
+      localStorage.setItem('admin_token', newToken);
+    } else {
+      localStorage.removeItem('admin_token');
+    }
+  };
+  
+  // 监听 token 变化来同步 isAuthenticated 状态
+  useEffect(() => {
+    setIsAuthenticated(!!token);
+  }, [token]);
+
+
+  // 登出函数现在只负责清除前端状态
   const logout = () => {
+    setToken(null);
     setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, logout }}
+      value={{ isAuthenticated, token, setIsAuthenticated, setToken, logout }}
     >
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />

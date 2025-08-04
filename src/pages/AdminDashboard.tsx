@@ -6,12 +6,29 @@ import { cn } from '@/lib/utils';
 
 
 export default function AdminDashboard() {
-  const { logout } = useContext(AuthContext);
+  // 从 Context 中获取 token 和 logout 方法
+  const { logout, token } = useContext(AuthContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    // 1. 调用后端登出接口
+    if (token) {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        // 后端请求成功或失败，前端都应该继续执行登出
+      } catch (error) {
+        console.error("登出请求失败:", error);
+        // 即使请求失败，也继续前端的登出流程
+      }
+    }
+
+    // 2. 执行前端登出逻辑
+    logout(); // 这个方法会清除 token 和认证状态
     toast.success('已成功退出登录');
     navigate('/login');
   };

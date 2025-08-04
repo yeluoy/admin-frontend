@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
 import { AuthContext } from '@/contexts/authContext';
 import { toast } from 'sonner';
 
@@ -8,39 +7,52 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      const response = await fetch('http://localhost:8082/api/auth/login', {
+      // 使用相对路径以触发 Vite 代理
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        // 使用 state 中的 username 和 password
         body: JSON.stringify({
-          username: "zmj9831",
-          password: "zmj983167157",
+          username: username,
+          password: password,
         }),
       });
 
+      // 检查网络请求是否成功 (例如 404, 500 等)
+      if (!response.ok) {
+        // 尝试解析错误信息，如果后端有返回的话
+        const errorResult = await response.json().catch(() => null);
+        toast.error(errorResult?.message || `请求失败: ${response.status}`);
+        setLoading(false); // 请求失败，设置 loading 为 false
+        return;
+      }
+
       const result = await response.json();
 
-      if (result.success) {
+      if (result.success && result.data.token) {
         setIsAuthenticated(true);
+        setToken(result.data.token);
         toast.success('登录成功');
+        // 成功后直接导航，不再设置 loading
         navigate('/admin/dashboard');
       } else {
         toast.error(result.message || '登录失败');
+        setLoading(false); // 业务逻辑失败，设置 loading 为 false
       }
     } catch (error) {
       toast.error('网络请求失败，请检查服务器连接');
       console.error('Error logging in:', error);
-    } finally {
-      setLoading(false);
+      setLoading(false); // 捕获到异常，设置 loading 为 false
     }
   };
 

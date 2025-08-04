@@ -14,9 +14,9 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8082',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // rewrite: (path) => path.replace(/^\/api/, ''), // <-- 删除或者注释掉这一行
       },
     },
-    port: 3032,
+    port: 3002, // 注意：您的 package.json 脚本中指定的是 3002 端口
   },
 });
