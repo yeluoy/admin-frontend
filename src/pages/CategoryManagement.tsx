@@ -1,27 +1,59 @@
-import { useState, useEffect } from 'react';
-import { getCategories, addCategory, deleteCategory, Category } from '@/mocks/categories';
+import { useState, useEffect, useContext } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { AuthContext } from '@/contexts/authContext';
+
+// 类型定义保持不变
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+  postCount: number;
+  sortOrder: number;
+  createdTime: string;
+}
 
 export default function CategoryManagement() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [addLoading, setAddLoading] = useState(false); // 新增：添加按钮的加载状态
   const [newCategory, setNewCategory] = useState({
     name: '',
     description: ''
   });
-  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState<number | null>(null);
+  const { token } = useContext(AuthContext);
 
-  // Fetch categories on component mount
+  // 获取分类列表的逻辑保持不变
   useEffect(() => {
     const fetchCategories = async () => {
+      if (!token) {
+        toast.error('用户未登录，无法获取数据');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        const data = await getCategories();
-        setCategories(data);
+        const response = await fetch('/api/categories', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('网络请求失败');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          setCategories(result.data);
+        } else {
+          toast.error(result.message || '获取分类列表失败');
+        }
       } catch (error) {
-        toast.error('获取分类失败');
+        toast.error('获取分类时发生错误');
         console.error('Error fetching categories:', error);
       } finally {
         setLoading(false);
@@ -29,9 +61,9 @@ export default function CategoryManagement() {
     };
 
     fetchCategories();
-  }, []);
+  }, [token]);
 
-  // Handle input changes for new category
+  // 输入框变化的逻辑保持不变
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNewCategory(prev => ({
@@ -40,7 +72,7 @@ export default function CategoryManagement() {
     }));
   };
 
-  // Handle add category form submission
+  // 1. 实现添加分类的后端请求
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -48,37 +80,76 @@ export default function CategoryManagement() {
       toast.error('分类名称不能为空');
       return;
     }
+    if (!token) {
+      toast.error('用户未登录，无法执行操作');
+      return;
+    }
 
+    setAddLoading(true);
     try {
-      const category = await addCategory(newCategory);
-      setCategories(prev => [...prev, category]);
-      setNewCategory({ name: '', description: '' });
-      setIsAdding(false);
-      toast.success(`成功添加分类: ${category.name}`);
+      const response = await fetch('/api/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newCategory)
+      });
+
+      if (!response.ok) {
+        throw new Error('网络请求失败');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setCategories(prev => [...prev, result.data]);
+        setNewCategory({ name: '', description: '' });
+        setIsAdding(false);
+        toast.success(`成功添加分类: ${result.data.name}`);
+      } else {
+        toast.error(result.message || '添加分类失败');
+      }
     } catch (error) {
-      toast.error('添加分类失败');
+      toast.error('添加分类时发生错误');
       console.error('Error adding category:', error);
+    } finally {
+      setAddLoading(false);
     }
   };
 
-  // Handle category deletion
-  const handleDeleteCategory = async (id: string) => {
+  // 删除分类的逻辑保持不变
+  const handleDeleteCategory = async (id: number) => {
     if (!confirm('确定要删除这个分类吗？此操作不可恢复。')) {
+      return;
+    }
+
+    if (!token) {
+      toast.error('用户未登录，无法执行操作');
       return;
     }
 
     try {
       setDeleteLoading(id);
-      const success = await deleteCategory(id);
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('网络请求失败');
+      }
       
-      if (success) {
+      const result = await response.json();
+      if (result.success) {
         setCategories(prev => prev.filter(category => category.id !== id));
         toast.success('分类已删除');
       } else {
-        toast.error('删除分类失败');
+        toast.error(result.message || '删除分类失败');
       }
     } catch (error) {
-      toast.error('删除分类失败');
+      toast.error('删除分类时发生错误');
       console.error('Error deleting category:', error);
     } finally {
       setDeleteLoading(null);
@@ -111,7 +182,6 @@ export default function CategoryManagement() {
         </button>
       </div>
 
-      {/* Add Category Form */}
       {isAdding && (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 transition-all animate-in fade-in slide-in-from-top-5 duration-300">
           <h2 className="text-lg font-semibold text-slate-800 mb-4">添加新分类</h2>
@@ -143,25 +213,27 @@ export default function CategoryManagement() {
             </div>
             
             <div className="flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={() => setIsAdding(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                取消
-              </button>
+              {/* 2. 更新保存按钮以反映加载状态 */}
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={addLoading}
+                className="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center"
               >
-                保存分类
+                {addLoading ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                    保存中...
+                  </>
+                ) : (
+                  '保存分类'
+                )}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Categories List */}
+      {/* Categories List (UI 保持不变) */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
@@ -186,7 +258,6 @@ export default function CategoryManagement() {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {loading ? (
-                // Loading state
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center space-x-2">
@@ -196,7 +267,6 @@ export default function CategoryManagement() {
                   </td>
                 </tr>
               ) : categories.length === 0 ? (
-                // Empty state
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center">
@@ -212,7 +282,6 @@ export default function CategoryManagement() {
                   </td>
                 </tr>
               ) : (
-                // Categories list
                 categories.map((category) => (
                   <tr key={category.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -227,7 +296,7 @@ export default function CategoryManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                      {new Date(category.createdAt).toLocaleString()}
+                      {new Date(category.createdTime).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button

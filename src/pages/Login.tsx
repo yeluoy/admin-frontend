@@ -15,44 +15,52 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // 使用相对路径以触发 Vite 代理
+      console.log('开始登录请求，用户名:', username);
+      
+      // 简化的请求配置
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // 使用 state 中的 username 和 password
         body: JSON.stringify({
-          username: username,
+          username: username.trim(),
           password: password,
         }),
       });
 
-      // 检查网络请求是否成功 (例如 404, 500 等)
+      console.log('响应状态:', response.status);
+      console.log('响应 headers:', response.headers);
+
       if (!response.ok) {
-        // 尝试解析错误信息，如果后端有返回的话
-        const errorResult = await response.json().catch(() => null);
-        toast.error(errorResult?.message || `请求失败: ${response.status}`);
-        setLoading(false); // 请求失败，设置 loading 为 false
+        console.error('请求失败，状态码:', response.status);
+        
+        // 尝试获取错误信息
+        const errorText = await response.text();
+        console.error('错误响应内容:', errorText);
+        
+        toast.error(`登录失败 (${response.status})`);
+        setLoading(false);
         return;
       }
 
       const result = await response.json();
+      console.log('登录响应:', result);
 
-      if (result.success && result.data.token) {
+      if (result.success && result.data && result.data.token) {
         setIsAuthenticated(true);
         setToken(result.data.token);
         toast.success('登录成功');
-        // 成功后直接导航，不再设置 loading
         navigate('/admin/dashboard');
       } else {
+        console.error('登录业务逻辑失败:', result);
         toast.error(result.message || '登录失败');
-        setLoading(false); // 业务逻辑失败，设置 loading 为 false
+        setLoading(false);
       }
     } catch (error) {
-      toast.error('网络请求失败，请检查服务器连接');
-      console.error('Error logging in:', error);
-      setLoading(false); // 捕获到异常，设置 loading 为 false
+      console.error('网络请求异常:', error);
+      toast.error('网络连接失败');
+      setLoading(false);
     }
   };
 

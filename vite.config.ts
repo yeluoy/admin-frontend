@@ -14,9 +14,22 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8082',
         changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, ''), // <-- 删除或者注释掉这一行
+        secure: false,
+        // rewrite 规则必须注释掉，因为后端端点就是 /api/auth/login
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('proxy error', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          });
+        },
       },
     },
-    port: 3002, // 注意：您的 package.json 脚本中指定的是 3002 端口
+    port: 3002,
   },
 });
